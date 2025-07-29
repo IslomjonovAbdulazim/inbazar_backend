@@ -25,16 +25,25 @@ async def lifespan(app: FastAPI):
     # Startup
     print("🚀 InBazar API ishga tushirilmoqda...")
 
-    if BOT_AVAILABLE and bot_instance:
+    # Only start bot if enabled and available
+    should_start_bot = (
+        BOT_AVAILABLE and
+        bot_instance and
+        getattr(settings, 'enable_bot', True)  # Default to True if not set
+    )
+
+    if should_start_bot:
         try:
+            print("🤖 Starting Telegram bot...")
             await bot_instance.start_bot()
         except Exception as e:
             print(f"❌ Bot ishga tushmadi: {e}")
+            print("💡 Bot conflicts can happen if another instance is running")
 
     yield
 
     # Shutdown
-    if BOT_AVAILABLE and bot_instance:
+    if should_start_bot and bot_instance:
         try:
             await bot_instance.stop_bot()
         except Exception as e:

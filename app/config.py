@@ -29,6 +29,7 @@ class Settings(BaseSettings):
     # App
     app_name: str = "Clothing Shop API"
     debug: bool = False
+    enable_bot: bool = True  # Control bot startup
 
     class Config:
         env_file = ".env"
